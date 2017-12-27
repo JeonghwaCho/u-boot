@@ -38,7 +38,7 @@
 #define CONFIG_EXTRA_ENV_SETTINGS	\
 	"setbootargs=setenv bootargs earlyprintk swiotlb=1 "		\
 		"console=ttyFIQ0,115200n8 "				\
-		"rw root=/dev/mmcblk1p2 rootfstype=ext4 rootwait "	\
+		"rw root=/dev/mmcblk0p2 rootfstype=ext4 rootwait "	\
 		"storagemedia=${storagemedia}\0"			\
 	"bootcmd=cfgload; run setbootargs; mmc dev ${bootdev}; "	\
 		"load mmc ${bootdev} 0x02000000 Image; "		\
