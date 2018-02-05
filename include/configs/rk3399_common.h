@@ -48,7 +48,8 @@
 #define CONFIG_USB_FUNCTION_MASS_STORAGE
 
 /* RAW SD card / eMMC locations. */
-#define CONFIG_SYS_SPI_U_BOOT_OFFS	(128 << 10)
+/* Current size of idbspl binary for SPI is over 128MB */
+#define CONFIG_SYS_SPI_U_BOOT_OFFS	(256 << 10)
 
 /* FAT sd card locations. */
 #define CONFIG_SYS_MMCSD_FS_BOOT_PARTITION	1

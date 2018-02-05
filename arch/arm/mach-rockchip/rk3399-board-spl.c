@@ -205,7 +205,7 @@ void board_init_f(ulong dummy)
 	 * printascii("string");
 	 */
 	debug_uart_init();
-	printascii("U-Boot SPL board init");
+	printascii("U-Boot SPL board init\n");
 #endif
 
 	rk_clrsetreg(SGRF_DDR_RGN_CON16, 0x1FF, 0x200);
