@@ -9,6 +9,16 @@
 
 #include <configs/rk3399_common.h>
 
+#ifdef CONFIG_SPI_FLASH
+#define CONFIG_ENV_IS_IN_SPI_FLASH
+#define CONFIG_ENV_SPI_BUS              0
+#define CONFIG_ENV_SPI_CS               0
+#define CONFIG_ENV_SPI_MAX_HZ           10000000
+#define CONFIG_ENV_SPI_MODE             0
+#undef CONFIG_ENV_OFFSET
+#define CONFIG_ENV_OFFSET               0x140000        /* 1MB+256kB */
+#define CONFIG_ENV_SECT_SIZE            0x10000
+#else
 #define CONFIG_ENV_IS_IN_MMC
 #define CONFIG_SYS_MMC_ENV_DEV 0
 /*
@@ -18,10 +28,9 @@
  */
 #undef CONFIG_ENV_OFFSET
 #define CONFIG_ENV_OFFSET (240 * 1024)
+#endif
 
 #define SDRAM_BANK_SIZE			(2UL << 30)
-
-#define CONFIG_MTD_DEVICE
 
 #define CONFIG_BOOTP_BOOTPATH
 #define CONFIG_BOOTP_DNS
@@ -36,16 +45,27 @@
 #define CONFIG_SUPPORT_RAW_INITRD
 #define CONFIG_ENV_VARS_UBOOT_CONFIG
 
+#define CONFIG_MTD_DEVICE
+#define CONFIG_MTD_PARTITION
+#define CONFIG_CMD_MTDPARTS
+
+#define MTDIDS_DEFAULT		"nor0=spi-flash.0"
+#define MTDPARTS_DEFAULT	"mtdparts=spi-flash.0:" \
+				"32k(reseved1),224k(idbspl)," \
+				"1m(uboot),8k(env)," \
+				"7m(kernel),100k(dtb),7m(initrd)"
+
 #undef CONFIG_EXTRA_ENV_SETTINGS
 #define CONFIG_EXTRA_ENV_SETTINGS	\
 	"setbootargs=setenv bootargs earlyprintk swiotlb=1 "		\
 		"console=ttyFIQ0,115200n8 "				\
-		"rw root=/dev/mmcblk0p2 rootfstype=ext4 rootwait "	\
-		"storagemedia=${storagemedia}\0"			\
-	"bootcmd=cfgload; run setbootargs; mmc dev ${bootdev}; "	\
-		"load mmc ${bootdev} 0x02000000 Image; "		\
-		"load mmc ${bootdev} 0x04000000 uInitrd; "		\
-		"load mmc ${bootdev} 0x01f00000 rk3399-odroidn1-linux.dtb; "	\
+		"rw root=/dev/sda2 rootfstype=ext4 rootwait "	\
+		"mtdparts="MTDPARTS_DEFAULT"\0"	\
+	"bootcmd=sf probe; mtdparts; "		\
+		"sf read 0x01000000 kernel; "	\
+		"unzip 0x01000000 0x02000000 "	\
+		"sf read 0x04000000 initrd; "	\
+		"sf read 0x01f00000 dtb; "	\
 		"booti 0x02000000 - 0x01f00000\0"
 
 #define CONFIG_BOARD_LATE_INIT
