@@ -20,11 +20,12 @@ extern int board_scan_boot_storage(void);
 #ifdef CONFIG_BOARD_LATE_INIT
 int board_late_init(void)
 {
+#ifndef CONFIG_SPI_FLASH
 	if (board_scan_boot_storage() != 0) {
 		printf("board: scan boot stoarge fail\n");
 		return -1;
 	}
-
+#endif
 	return 0;
 }
 #endif
